@@ -11,6 +11,7 @@ router.get('/', (req, res) => {
 // Get single member
 router.get('/:id', (req, res) => {
   const found = members.some((x) => x.id === parseInt(req.params.id))
+
   if (found) {
     res.json(members.filter((x) => x.id === parseInt(req.params.id)))
   } else {
@@ -34,6 +35,39 @@ router.post('/', (req, res) => {
   members.push(newMember)
 
   res.json(members)
+})
+
+// Update member
+router.put('/:id', (req, res) => {
+  const found = members.some((x) => x.id === parseInt(req.params.id))
+
+  if (found) {
+    const updatedMember = req.body
+    members.forEach((x) => {
+      if (x.id === parseInt(req.params.id)) {
+        x.name = updatedMember.name ? updatedMember.name : x.name
+        x.email = updatedMember.email ? updatedMember.email : x.email
+
+        res.json({ msg: 'Member updated', member: x })
+      }
+    })
+  } else {
+    res.status(400).json({ msg: `Member with id ${req.params.id} not found` })
+  }
+})
+
+// Delete single member
+router.delete('/:id', (req, res) => {
+  const found = members.some((x) => x.id === parseInt(req.params.id))
+
+  if (found) {
+    res.json({
+      msg: 'Member deleted',
+      members: members.filter((x) => x.id !== parseInt(req.params.id)),
+    })
+  } else {
+    res.status(400).json({ msg: `Member with id ${req.params.id} not found` })
+  }
 })
 
 module.exports = router
